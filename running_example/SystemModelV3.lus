@@ -1,0 +1,78 @@
+
+node abs(n: real) returns (r: real);
+let
+  r = if 0.0<=n then n else -n;
+tel
+
+contract ConstSpecs(const threshold, delta, error: real) returns ();
+let
+  assume "C1: threshold is positive" threshold > 0.0;
+  assume "C2: delta is positive" delta > 0.0;
+  assume "C3: error is non-negative" error >= 0.0;
+tel
+
+node SystemModel (const THRESH, DELTA, S_ERROR: real;
+                  alt1, alt2, alt3: real) returns (actual_alt: real);
+(*@contract
+  import ConstSpecs(THRESH, DELTA, S_ERROR) returns (); 
+  assume "S1: Error in altitude from sensor 1 is bounded by S_ERROR"
+    abs(0.0 -> pre actual_alt - alt1) <= S_ERROR;
+  assume "S2: Error in altitude from sensor 2 is bounded by S_ERROR"
+    abs(0.0 -> pre actual_alt - alt2) <= S_ERROR;
+  assume "S3: Error in altitude from sensor 3 is bounded by S_ERROR"
+    abs(0.0 -> pre actual_alt - alt3) <= S_ERROR;
+  guarantee "R1: Altitude never above THRESH" actual_alt <= THRESH;
+*)
+  var pitch, alt: real;
+let
+  alt = TriplexVoter(alt1, alt2, alt3);
+  pitch = Controller(THRESH, DELTA, S_ERROR, alt);
+  actual_alt = Environment(DELTA, pitch);
+tel
+
+node imported Controller (const THRESH, DELTA, S_ERROR: real; 
+                          alt: real) returns (pitch: real);
+(*@contract
+  const LIMIT: real = THRESH - (DELTA + 2.0*S_ERROR);
+  import ConstSpecs(THRESH, DELTA, S_ERROR) returns (); 
+  guarantee "L1: Pitch is negative whenever altitude value is over LIMIT"
+    alt > LIMIT => pitch < 0.0;
+*)
+
+node imported Environment (const DELTA: real;
+                           pitch: real) returns (alt: real);
+(*@contract
+  guarantee "E1: Altitude is zero initially"
+    (alt = 0.0) -> true;
+  guarantee "E2: Altitude is always non-negative"
+    alt >= 0.0;
+  guarantee "E3: Altitude does not increase whenever the controller outputs a negative pitch value"
+    true -> (pitch < 0.0 => alt <= pre alt);
+  guarantee "E4: Altitude does not decrease more than DELTA units per sampling frame" 
+    true -> (pitch < 0.0 => alt >= pre alt - DELTA);
+  guarantee "E5: Altitude does not decrease whenever the controller outputs a positive pitch value"
+    true -> (pitch > 0.0 => alt >= pre alt);
+  guarantee "E6: Altitude does not increase more than DELTA units per sampling frame"
+    true -> (pitch > 0.0 => alt <= pre alt + DELTA);
+  guarantee "E7: Altitude remains the same whenever the controller outputs a zero pitch value"
+    true -> (pitch = 0.0 => alt = pre alt);
+*)
+
+node min(a,b: real) returns (c: real);
+let
+  c = if a<=b then a else b;
+tel
+
+node TriplexVoter (alt1,alt2,alt3: real) returns (r: real);
+  var ad12,ad13,ad23,m: real;
+let
+  ad12 = abs(alt1 - alt2);  ad13 = abs(alt1 - alt3);
+  ad23 = abs(alt2 - alt3);
+
+  m = min(ad12, min(ad13, ad23));
+
+  r = if m = ad12 then (alt1 + alt2) / 2.0
+      else if m = ad13 then (alt1 + alt3) / 2.0
+      else (alt2 + alt3) / 2.0;
+tel
+
