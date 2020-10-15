@@ -60,7 +60,7 @@ with open(output_file, 'w', newline='') as csv_f:
                 pass
 
             if not success:
-                error_nb = 1
+                error_nb += 1
                 print("Skipping {} because it has not been proved safe.".format(file))
                 continue
 

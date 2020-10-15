@@ -13,6 +13,7 @@ parser.add_argument('--all', action="store_true")
 parser.add_argument('--with_must_set', action="store_true")
 parser.add_argument('--timeout', type=int, default=1600)
 parser.add_argument('--solver', choices=["Z3", "CVC4", "Yices", "Yices2"], default='Z3')
+parser.add_argument('--minimize', action="store_true")
 
 args = parser.parse_args()
 
@@ -22,6 +23,7 @@ COMPUTE_ALL_CORES = args.all
 MUST_SET_OPTIMISATION = args.with_must_set
 SMT_SOLVER = args.solver
 TIMEOUT = args.timeout
+MINIMIZE = args.minimize
 
 input_dir = args.models_dir
 output_dir = args.output_dir
@@ -37,9 +39,9 @@ args = ["--ivc", "true",
         "--ivc_all", b2str(COMPUTE_ALL_CORES),
         "--compositional", "true",
         "--smt_solver", SMT_SOLVER,
-        "--ind_compress", "false",
         "--ivc_uc_timeout", "30",
         "--timeout", str(TIMEOUT),
+        "--minimize_program", "valid_lustre" if MINIMIZE else "no",
         "-json"
     ]
 
@@ -56,11 +58,12 @@ for file in os.listdir(input_dir):
         input_file = os.path.join(input_dir, file)
         output_file = os.path.join(output_dir, file + ".txt")
         log_file = os.path.join(output_dir, file + ".log")
+        minimized_dir = os.path.join(output_dir, file[0:-4])
         t = current_ms_time()
         print("Running on {}...".format(file))
         try:
             with open(output_file, 'w') as output_f:
-                subprocess.run([KIND2] + args + [input_file],
+                subprocess.run([KIND2] + args + ["--ivc_output_dir", minimized_dir] + [input_file],
                     stdout=output_f,
                     stderr=output_f)
                     #,timeout=TIMEOUT)
