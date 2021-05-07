@@ -4,17 +4,12 @@ let
   r = if 0.0<=n then n else -n;
 tel
 
-contract ConstSpecs(const threshold, delta, error: real) returns ();
-let
-  assume "C1: threshold is positive" threshold > 0.0;
-  assume "C2: delta is positive" delta > 0.0;
-  assume "C3: error is non-negative" error >= 0.0;
-tel
-
 node SystemModel (const THRESH, DELTA, S_ERROR: real;
                   alt1, alt2, alt3: real) returns (actual_alt: real);
 (*@contract
-  import ConstSpecs(THRESH, DELTA, S_ERROR) returns (); 
+  assume "C1: THRESH is positive" THRESH > 0.0;
+  assume "C2: DELTA is positive" DELTA > 0.0;
+  assume "C3: S_ERROR is non-negative" S_ERROR >= 0.0;
   assume "S1: Error in altitude from sensor 1 is bounded by S_ERROR"
     abs(0.0 -> pre actual_alt - alt1) <= S_ERROR;
   assume "S2: Error in altitude from sensor 2 is bounded by S_ERROR"
@@ -34,7 +29,6 @@ node imported Controller (const THRESH, DELTA, S_ERROR: real;
                           alt: real) returns (pitch: real);
 (*@contract
   const LIMIT: real = THRESH - (DELTA + 2.0*S_ERROR);
-  import ConstSpecs(THRESH, DELTA, S_ERROR) returns (); 
   guarantee "L1: Pitch is negative whenever altitude value is over LIMIT"
     alt > LIMIT => pitch < 0.0;
 *)
