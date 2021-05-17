@@ -9,14 +9,14 @@ and four scripts to compute the results described in the paper.
 - SystemModelV3.lus: Enhanced system model with `LIMIT = THRESH - (DELTA + 2.0*S_ERROR)`
 
 Scripts:
-- Example 1 (page 7)
+- Example 1 (page 6)
   - run1.sh: Computes an approximate MIVC over assumptions and guarantees for SystemModelV1
   - run2.sh: Computes an (exact) MIVC over assumptions and guarantees for SystemModelV1
   - run3.sh: Computes all MIVCs over assumptions and guarantees for SystemModelV1
-- Example 2 (page 8)
+- Example 2 (page 7)
   - run4.sh: Computes all MIVCs and the MUST set over assumptions and guarantees for SystemModelV2
   - run5.sh: Computes all MIVCs and the MUST set over assumptions and guarantees for SystemModelV3
-- Example 3 (page 11)
+- Example 3 (page 9)
   - run6.sh: Computes all MCSs over assumptions and guarantees for SystemModelV3
 
 Notice that the result computed with `run1.sh` may correspond to a MIVC or

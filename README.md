@@ -1,6 +1,6 @@
 # MIVC-MUST Experiments
 
-This repository serves as supporting material for the paper [1]. The new features described in the paper are available at https://github.com/kind2-mc/kind2/tree/mivc-must-mcs-20. You will need to compile the version of Kind 2 available there to run the scripts below. The scripts of this repository require Python >= 3.5, and assume that the `kind2` binary is located in the root of this repository.
+This repository serves as supporting material for the paper [1]. The new features described in the paper are available at https://github.com/kind2-mc/kind2/tree/mivc-must-mcs. You will need to compile the version of Kind 2 available there to run the scripts below. The scripts of this repository require Python >= 3.5, and assume that the `kind2` binary is located in the root of this repository.
 
 The `running_example` directory contains the model used as running example, and the scripts necessary to compute the results described in the paper.
 
@@ -18,6 +18,6 @@ https://github.com/kind2-mc/kind2/tree/mivc-must-mcs-20/doc/usr/source/9_other/1
 
 For information about other options in Kind 2, please see Kind 2 user documentation: https://kind.cs.uiowa.edu/kind2_user_doc/
 
-[1] Merit and Blame Assignment with Kind 2. D. Larraz, M. Laurent, and C. Tinelli.
+[1] Merit and Blame Assignment with Kind 2. D. Larraz, M. Laurent, and C. Tinelli. CoRR [abs/2105.06575](https://arxiv.org/abs/2105.06575) 2021.
 
 [2] Efficient generation of all minimal inductive validity cores. E. Ghassabani, M. W. Whalen, and A. Gacek. FMCAD 2017.
